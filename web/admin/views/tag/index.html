@@ -1,0 +1,177 @@
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <h1>文章<small>列表</small></h1>
+</section>
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+                <div class="box-header">
+                    <button type="button" class="btn btn-info" onclick="btnCreate()">新建</button>
+                </div>
+                <div class="box-body">
+                    <table id="table" class="table table-striped table-bordered table-hover dataTable"  cellspacing="0" width="100%">
+                        <thead>
+                        <tr>
+                            <th>编号</th>
+                            <th>标签名称</th>
+                            <th>创建时间</th>
+                            <th>更新时间</th>
+                            <th>使用次数</th>
+                            <th>操作栏</th>
+                        </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="modal fade" id="modal-default">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Default Modal</h4>
+            </div>
+            <div class="modal-body">
+                <p>One fine body&hellip;</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap3-dialog/1.34.7/css/bootstrap-dialog.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap3-dialog/1.34.7/js/bootstrap-dialog.min.js"></script>
+<script src="/static/admin/js/dialog.js"></script>
+<script type="text/javascript">
+    $(function () {
+        initTableList();
+       // selectTr($('#table tbody'));
+    });
+    var oTable = null;
+    var initTableList = function () {
+        var table = $('#table');
+        if (oTable == null) { //仅第一次检索时初始化Datatable
+            oTable = table.dataTable({
+                "dom": "tilp", //'lrtip',
+                "sAjaxSource": "/admin/tag/page",
+                "paging": true,
+                "pagingType": "full_numbers", //分页样式：simple,simple_numbers,full,full_numbers
+                "searching": false,
+                "ordering": true,
+                "order": [
+                    [0, 'desc']
+                ],
+                "bServerSide": true,
+                "fnServerData": retrieveData,//执行方法
+                "fnServerParams": function (aoData) {
+                    // $("#SearchForm").serializeArray().forEach(function (val, index) {
+                    //     aoData.push(val);
+                    // });
+                },
+                "columns": [
+                    { "data": "ID", "className": "text-left", "bSortable": true },//编号
+                    { "data": "Name", "className": "text-left", "bSortable": true },//标签
+                    { "data": "CreateTime", "className": "text-left", "bSortable": true },//创建时间
+                    { "data": "UpdateTime", "className": "text-left", "bSortable": true },//更新时间
+                    { "data": "Count", "className": "text-left", "bSortable": true },//使用次数
+                ],
+                "columnDefs": [
+                    {
+                        "targets": [5],
+                        "render": function (data, type, row, colrow) {
+                            var buttons = "";
+                            buttons += '<button class="btn btn-sm btn-primary" style="margin-bottom:0px;margin-right:5px;" type="button" onclick="edit(' + colrow.row + ')"><i class="fa fa-plus"></i>&nbsp;编辑</button>';
+                            return buttons;
+                        },
+                    }
+                ],
+                "language": datatablelang
+            });
+        } else {
+            //刷新Datatable，会自动激发retrieveData
+            oTable.fnDraw();
+        }
+    };
+
+    function retrieveData(sSource, aoData, fnCallback) {
+        $.ajax({
+            "type": "get",
+            "contentType": "application/json",
+            "url": sSource,
+            "dataType": "json",
+            "data": arrangeData(aoData),
+            "success": function (resp) {
+                fnCallback(resp); //服务器端返回的对象的returnObject部分是要求的格式
+            }
+        });
+    }
+
+    function btnCreate() {
+        $.showOpen("新建","/admin/tag/create",function (dialogRef) {
+            var tagName = dialogRef.getModalBody().find('input[id=tagName]').val();
+            if (!tagName){
+                $.showErr("请输入标签名称")
+                return;
+            } else {
+                dialogRef.enableButtons(false);
+                dialogRef.setClosable(false);
+                $.ajax({
+                    type : 'POST',
+                    url : "/admin/tag/create",
+                    data : {"tagName":tagName},
+                    success :function (result) {
+                        if (result.status) {
+                            dialogRef.close();
+                            initTableList();
+                        }else {
+                            dialogRef.enableButtons(true);
+                            dialogRef.setClosable(true);
+                            $.showErr(result.msg);
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    function edit(index) {
+        var row = oTable.fnGetData(index);
+        $.showOpen("新建","/admin/tag/edit?id="+row.ID, function (dialogRef) {
+            var tagId = dialogRef.getModalBody().find('input[id=tagId]').val();
+            var tagName = dialogRef.getModalBody().find('input[id=tagName]').val();
+            if (!tagName){
+                $.showErr("请输入标签名称")
+                return;
+            } else {
+                dialogRef.enableButtons(false);
+                dialogRef.setClosable(false);
+                $.ajax({
+                    type : 'POST',
+                    url : "/admin/tag/edit",
+                    data : {"tagId":tagId,"tagName":tagName},
+                    success :function (result) {
+                        if (result.status) {
+                            dialogRef.close();
+                            initTableList();
+                        }else {
+                            dialogRef.enableButtons(true);
+                            dialogRef.setClosable(true);
+                            $.showErr(result.msg);
+                        }
+                    }
+                });
+            }
+        });
+    }
+</script>

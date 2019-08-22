@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+<head>
+    <!-- Basic Page Needs
+    –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Patara Blog Html Theme</title>
+    <meta name="description" content="">
+
+    <!-- Mobile Specific Metas
+    –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- FONT
+    –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+    <link href='http://fonts.googleapis.com/css?family=Raleway:400,600,700,800' rel='stylesheet' type='text/css'>
+    <link href="https://fonts.googleapis.com/css?family=Libre+Baskerville:400,700,400italic" rel="stylesheet" type="text/css">
+
+    <!-- CSS
+    –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+    <link rel="stylesheet" href="/static/ui/css/styles.css">
+
+</head>
+
+<body>
+<!--[if lt IE 7]>
+<p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+<![endif]-->
+
+<!-- Top Bar -->
+<section class="top-bar">
+    <div class="container">
+        <div class="row">
+
+            <div class="box box-1">
+
+                <div class="socials">
+                    <ul>
+                        <li><a href="#!"><i class="icon-gplus-circled"></i></a></li>
+                        <li><a href="#!"><i class="icon-facebook-circled"></i></a></li>
+                        <li><a href="#!"><i class="icon-twitter-circled"></i></a></li>
+                        <li><a href="#!"><i class="icon-vimeo-circled"></i></a></li>
+                    </ul>
+                </div>
+            </div>
+{{/*            <div class="box box-2">*/}}
+{{/*                <form class="search-box">*/}}
+{{/*                    <div class="btn-close"></div>*/}}
+{{/*                    <p>*/}}
+{{/*                        <input class="search_bar" type="text" value="" placeholder="Search" data-active-placeholder="Type to search...">*/}}
+{{/*                    </p>*/}}
+{{/*                    <p class="help">*/}}
+{{/*                        Press <strong>return</strong> to search. Press <strong>Esc</strong> to cancel.*/}}
+{{/*                    </p>*/}}
+{{/*                </form>*/}}
+{{/*            </div>*/}}
+        </div>
+
+    </div>
+</section>
+
+<!-- Header -->
+<header class="header">
+    <div class="container">
+        <div class="logo">
+            <a href="#">
+                <h1>ILOVEYOU__</h1>
+                <h6>个人博客</h6>
+            </a>
+        </div>
+    </div>
+</header>
+
+<!-- Main Nav -->
+<section class="container">
+    <nav class="nav">
+        <ul>
+            <li><a href="index.html">Blog</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="features.html">Features</a></li>
+            <li><a href="contact.html">Contact</a></li>
+        </ul>
+    </nav>
+</section>
+
+<section class="main container">
+    {{ yield }}
+</section>
+
+{{/*<section>*/}}
+{{/*    <nav role="navigation">*/}}
+{{/*        <ul class="pagination">*/}}
+{{/*            <li><a class="next" href="#0">&larr; next page</a></li>*/}}
+{{/*            <li><a class="prev" href="#0">prev page &rarr;</a></li>*/}}
+{{/*        </ul>*/}}
+{{/*    </nav>*/}}
+{{/*</section>*/}}
+
+<!-- Footer -->
+<footer>
+    <div class="inner">
+        <div class="container">
+            <div class="copyright">
+                <span class="sub">© 版权所有 2019 <a href="#">Volt</a> - 保留所有权利。</span>
+            </div>
+            <a href="#0" class="backtotop">Top</a>
+        </div>
+    </div>
+</footer>
+
+<script src="/static/ui/js/scripts.js"></script>
+
+<script>
+
+    $('.article #info').readmore({
+        speed: 600,
+        moreLink: '<a class="button-text" href="#">Read More <span>&darr;</span></a>',
+        lessLink: '<a class="button-text" href="#">Read Less <span>&uarr;</span></a>',
+        collapsedHeight: 120,
+        heightMargin: 20,
+        afterToggle: function(trigger, element, expanded) {
+            if(! expanded) { // The "Close" link was clicked
+                $('html, body').animate({scrollTop: element.offset().top}, {duration: 300});
+            }
+        }
+    });
+
+</script>
+</body>
+</html>

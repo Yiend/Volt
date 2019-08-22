@@ -1,0 +1,211 @@
+<section class="content-header">
+    <h1>新建文章<small></small>
+    </h1>
+</section>
+
+<section class="content">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box box-info">
+                <div class="box-header">
+                        <form class="form-horizontal">
+                            <div class="box-body">
+                                <div class="col-xs-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label" for="title">标题</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control" id="title" placeholder="">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xs-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label" for="author">作者</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control" id="author" placeholder="">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xs-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label" for="titlecolor">标题颜色</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control" disabled="disabled" id="titlecolor" placeholder="">
+                                        </div>
+                                        <div id="colorpickr"></div>
+                                    </div>
+                                </div>
+                                <div class="col-xs-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label" for="tag">分类</label>
+                                        <div class="col-sm-8">
+                                           <select class="form-control" id="tagselect" multiple="" >
+                                                {{range $k, $v := .tags}}
+                                                    <option value="{{$k}}">{{$v}}</option>
+                                                {{end}}
+                                            </select>
+{{/*                                            <input type="text" class="form-control" id="tag" placeholder="">*/}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body pad">
+                    <form>
+                        <textarea id="editor" name="editor" ></textarea>
+                    </form>
+                </div>
+                <div class="box-footer">
+                    <button type="button" id="save" onclick="save()" class="btn btn-primary pull-right">保存</button>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+    <!-- ./row -->
+</section>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/themes/nano.min.css"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap3-dialog/1.34.7/css/bootstrap-dialog.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap3-dialog/1.34.7/js/bootstrap-dialog.min.js"></script>
+<script src="/static/admin/js/dialog.js"></script>
+<!-- Modern or es5 bundle -->
+<script src="https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/pickr.min.js"></script>
+<script src="/static/plugins/select2/dist/js/select2.full.min.js"></script>
+<script src="/static/plugins/select2/dist/js/i18n/zh-CN.js"></script>
+<script type="text/javascript">
+    let data ={
+        title:"",
+        author:"",
+        titlecolor:"",
+        tags:[],
+        content:"",
+    };
+
+   $(function () {
+       const pickr = Pickr.create({
+           el: '#colorpickr',
+           theme: 'nano',
+           default:'#000000',
+           swatches: [
+               'rgba(244, 67, 54, 1)',
+               'rgba(233, 30, 99, 0.95)',
+               'rgba(156, 39, 176, 0.9)',
+               'rgba(103, 58, 183, 0.85)',
+               'rgba(63, 81, 181, 0.8)',
+               'rgba(33, 150, 243, 0.75)',
+               'rgba(3, 169, 244, 0.7)',
+               'rgba(0, 188, 212, 0.7)',
+               'rgba(0, 150, 136, 0.75)',
+               'rgba(76, 175, 80, 0.8)',
+               'rgba(139, 195, 74, 0.85)',
+               'rgba(205, 220, 57, 0.9)',
+               'rgba(255, 235, 59, 0.95)',
+               'rgba(255, 193, 7, 1)'
+           ],
+           components: {
+               preview: true,
+               opacity: true,
+               hue: true,
+               interaction: {
+                   hex: true,
+                   rgba: true,
+                   hsla: true,
+                   hsva: true,
+                   cmyk: true,
+                   input: true,
+                   clear: true,
+                   save: true
+               }
+           },
+           strings: {
+               save: '保存',  // Default for save button
+               clear: '清除', // Default for clear button
+               cancel: '取消' // Default for cancel button
+           }
+       });
+
+       pickr.on('init', instance => {
+           $("#titlecolor").val(instance.getColor().toHEXA());
+       }).on('save', (color, instance) => {
+           if (color){
+               $("#titlecolor").val(color.toHEXA());
+           }
+       }).on('clear', instance => {
+           $("#titlecolor").val("");
+       });
+
+       CKEDITOR.replace( 'editor', {
+           language: 'zh-CN',
+           height:600,
+           toolbarCanCollapse:true,//工具栏是否可以被收缩
+           forcePasteAsPlainText:true, // 是否强制复制过来的文字去除格式
+           colorButton_enableAutomatic:true,
+           colorButton_enableMore:true,
+           filebrowserImageUploadUrl :"/admin/common/upload",// 图片上传路径
+           image_previewText:' ', // 图片信息面板预览区内容的文字内容，默认显示CKEditor自带的内容
+       });
+
+       $("#tagselect").select2({
+           placeholder:"请选择标签",
+           language:"zh-CN",
+           maximumSelectionSize:3,//最多选择3个标签
+       });
+
+       $('#tagselect').on('select2:select', function (e) {
+           var selectdata = e.params.data;
+           data.tags.push({"id":parseInt(selectdata.id),"name":selectdata.text});
+       }).on('select2:unselect',function (e) {
+           var selectdata = e.params.data;
+           data.tags.forEach(function(item, index, arr) {
+               if(item.id == parseInt(selectdata.id)) {
+                   arr.splice(index, 1);
+               }
+           });
+       });
+   });
+
+
+   function save() {
+       var content = CKEDITOR.instances.editor.getData();
+       var title = $("#title").val();
+       var author = $("#author").val();
+       var titlecolor = $("#titlecolor").val();
+
+       if (!title){
+           $.showErr("请输入标题");
+           return;
+       }
+       if (!author){
+           $.showErr("请输入作者");
+           return;
+       }
+       if (!data.tags){
+           $.showErr("请选择标签");
+           return;
+       }
+       if (!content){
+           $.showErr("请输入内容");
+           return;
+       }
+       if (titlecolor){
+           data.titlecolor = "#" + titlecolor;
+       }
+       data.title = title;
+       data.titlecolor = titlecolor;
+       data.author = author;
+       data.content = content;
+       console.log(JSON.stringify(data));
+       $.post("/admin/article/create",JSON.stringify(data),function (res) {
+           if (res.status){
+               $.showSuccessTimeout("文章发布成功");
+               window.location="/admin/article";
+           }else {
+               $.showErr(res.msg);
+           }
+       });
+   }
+</script>

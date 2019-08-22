@@ -1,0 +1,39 @@
+
+# http配置
+[http]
+# http监听地址
+host = "127.0.0.1"
+# http监听端口
+port = 8021
+# http优雅关闭等待超时时长(单位秒)
+shutdown_timeout = 30
+
+# xorm配置
+[xorm]
+# 是否显示SQL
+show_sql = true
+# 是否显示SQL语句执行时间
+show_exec_time = true
+# 设置连接可以重用的最长时间(单位：秒)
+max_lifetime = 7200
+# 设置数据库的最大打开连接数
+max_open_conns = 150
+# 设置空闲连接池中的最大连接数
+max_idle_conns = 50
+# 数据库表名前缀
+table_prefix = "v_"
+
+# mysql数据库配置
+[mysql]
+# 连接地址
+host = "127.0.0.1"
+# 连接端口
+port= 3306
+# 用户名
+user = "root"
+# 密码
+password = "root"
+# 数据库
+db_name = "volt"
+# 连接参数
+parameters = "charset=utf8mb4&parseTime=True&loc=Local&allowNativePasswords=true"
